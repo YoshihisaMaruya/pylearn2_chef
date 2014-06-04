@@ -26,6 +26,14 @@ package "python-matplotlib" do
     action :install
 end
 
+template "/etc/profile.d/pylern2_env.sh" do
+    mode 0755
+    source "pylern2_env.sh.erb"
+    variables(:pylern2_home => node[:pylern2][:install_path] + "/pylearn2/scripts",
+              :pylern2_data_path => node[:pylern2][:data_path])
+end
+
+#you must run only once
 python_pip "git+git://github.com/Theano/Theano.git" do
     action :install
     options "--upgrade --no-deps"
@@ -42,12 +50,5 @@ bash "install_pylern2" do
     cd #{node[:pylern2][:install_path]}
     python setup.py develop
     EOH
-end
-
-template "/etc/profile.d/pylern2_env.sh" do
-    mode 0755
-    source "pylern2_env.sh.erb"
-    variables(:pylern2_home => node[:pylern2][:install_path] + "/pylearn2/scripts",
-              :pylern2_data_path => node[:pylern2][:data_path])
 end
 
